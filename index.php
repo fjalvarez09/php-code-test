@@ -23,7 +23,9 @@
 			$section[] = dbSelect($conPDO, $filter, false);
 		}
 		$section[] = dbSelect($conPDO, $filters, true);
-
+		
+		//Build html 
+		htmlBuild($filters,$section);
 
 		
 	}catch(PDOException $err){
@@ -47,39 +49,62 @@
 		$selQuery -> execute();
 		$res = "";
 		foreach ($selQuery as $result){
-			$res += "<tr>";
-			$res += "<td>".$result['orderid']."</td";
-			$res += "<td>".$result['comments']."</td>";
-			$res += "<td>".$result['shipdate_expected']."</td>";
-			$res += "</tr>"
+			$res .= "<tr>";
+			$res .= "<td>".$result['orderid']."</td>";
+			$res .= "<td>".$result['comments']."</td>";
+			$res .= "<td>".$result['shipdate_expected']."</td>";
+			$res .= "</tr>";
 		}
 		return $res;
 	}
 	
 	function htmlBuild($keywords, $filteredContent){
+		$htmlHead = '';
+		$htmlHead .='<!doctype html>';
+		$htmlHead .='<html lang="en">';
+		$htmlHead .='<head>';
+		$htmlHead .='<meta charset="utf-8">';
+		$htmlHead .='<meta name="viewport" content="width=device-width, initial-scale=1">';
+		$htmlHead .='<link rel="stylesheet" type="text/css" href="css.css">';
+		$htmlHead .='<script src="js.js"></script>';
+		$htmlHead .='</head>';
+		$htmlHead .='<body>';
+		
 		//prepare views
 		//menu
 		$tabs = '<div class="tab">';
 		$addTabs = "";
 		foreach ($keywords as $keyword){
-			$addTabs  = $addTabs .'<button class = "tabs" onclick="openTab"(event,\''.$keyword.'\')">'.$keyword.'</button>';
+			$addTabs  = $addTabs .'<button class = "tabs" onclick="openTab(event,\''.$keyword.'\')">'.$keyword.'</button>';
 		}
+		$addTabs .= '<button class = "tabs" onclick="openTab(event,\'misc\')">Misc</button>';
 		$tabs = $tabs.$addTabs.'</div>';
 		//view body
 		$contBody='';
 		for($i=0;$i<count($keywords)+1; $i++){
-			$contBody += '<div id= "'.$keywords[$i].'" class = "tabContent">' 
-			$contBody += '<table>';
-			$contBody += '<tr>';
-			$contBody += '<th style="width:20%">OrderId</th>';
-			$contBody += '<th style="width:70%">Comments</th>';
-			$contBody += '<th>Shipdate_expected</th>';
-			$contBody += '</tr>';
-			$contBody += $filteredContent[i];
-			$contBody += '</table>';	
-			$contBody += '</div>
+			$tabID = "";
+			if ($i == count($keywords)){
+				$tabID = "misc";
+			}else{
+				$tabID = $keywords[$i];
+			}
+			$contBody .= '<div id= "'.$tabID.'" class = "tabContent">'; 
+			$contBody .= '<table>';
+			$contBody .= '<tr>';
+			$contBody .= '<th style="width:20%">OrderId</th>';
+			$contBody .= '<th style="width:70%">Comments</th>';
+			$contBody .= '<th>Shipdate_expected</th>';
+			$contBody .= '</tr>';
+			$contBody .= $filteredContent[$i];
+			$contBody .= '</table>';	
+			$contBody .= '</div>';
 		}
 		
+		$htmlEnd = '';
+		$htmlEnd .= '</body>';
+		$htmlEnd .= '</html>';
+		
+		echo $htmlHead.$tabs.$contBody.$htmlEnd;
 	}
 
 	
