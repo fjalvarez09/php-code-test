@@ -47,21 +47,38 @@
 		$selQuery -> execute();
 		$res = "";
 		foreach ($selQuery as $result){
-			$res = $res."<br>".$result['orderid']." ".$result['comments']." ".$result['shipdate_expected'];
+			$res += "<tr>";
+			$res += "<td>".$result['orderid']."</td";
+			$res += "<td>".$result['comments']."</td>";
+			$res += "<td>".$result['shipdate_expected']."</td>";
+			$res += "</tr>"
 		}
 		return $res;
 	}
 	
 	function htmlBuild($keywords, $filteredContent){
-		
+		//prepare views
+		//menu
 		$tabs = '<div class="tab">';
 		$addTabs = "";
 		foreach ($keywords as $keyword){
 			$addTabs  = $addTabs .'<button class = "tabs" onclick="openTab"(event,\''.$keyword.'\')">'.$keyword.'</button>';
 		}
 		$tabs = $tabs.$addTabs.'</div>';
-		
-		
+		//view body
+		$contBody='';
+		for($i=0;$i<count($keywords)+1; $i++){
+			$contBody += '<div id= "'.$keywords[$i].'" class = "tabContent">' 
+			$contBody += '<table>';
+			$contBody += '<tr>';
+			$contBody += '<th style="width:20%">OrderId</th>';
+			$contBody += '<th style="width:70%">Comments</th>';
+			$contBody += '<th>Shipdate_expected</th>';
+			$contBody += '</tr>';
+			$contBody += $filteredContent[i];
+			$contBody += '</table>';	
+			$contBody += '</div>
+		}
 		
 	}
 
