@@ -4,8 +4,7 @@
 	$USER = 'root';
 	$PASSWORD = '';
 	
-	try{
-		//Connection/error 
+	try{ 
 		$conPDO = new PDO("mysql:host=$SERVER;dbname=$DBNAME", $USER, $PASSWORD);
 		$conPDO -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		/* Note
@@ -22,22 +21,18 @@
 		}
 		$section[] = dbSelect($conPDO, $filters, true);
 		
-		//Build html 
-		htmlBuild($filters,$section);
+		if (isset($_POST['update'])) {
+			addShipDate($conPDO);
+			htmlBuild($filters,$section, true);
+		}else{
+			//Build html 
+			htmlBuild($filters,$section, false);
+		}
 
-		
 	}catch(PDOException $err){
 			echo $err->getMessage();
 	}
-	
-	if (isset($_POST['update'])) {
-		//Connection/error 
-		$conPDO = new PDO("mysql:host=$SERVER;dbname=$DBNAME", $USER, $PASSWORD);
-		$conPDO -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		addShipDate($conPDO);
-    }
-
-	
+		
 	function dbSelect($connection,$commentSearch, $isInverse){
 		if($isInverse){
 			$querStr = "";
@@ -65,7 +60,7 @@
 		return $res;
 	}
 	
-	function htmlBuild($keywords, $filteredContent){
+	function htmlBuild($keywords, $filteredContent, $tableUpdated){
 		//Head
 		$htmlHead = '';
 		$htmlHead .='<!doctype html>';
@@ -110,11 +105,17 @@
 		}
 		
 			$contBody .= '<div id= "populateDates" class = "tabContent">'; 
-			$contBody .= '<div id="updatedRecs"> Update Records with Expected shipdate in comments?';
-			$contBody .= '<form method = "post">';
-			$contBody .= '<button type="submit" name="update" onclick="updateDB()">Submit</button>';
-			$contBody .= '</form>';
-			$contBody .= '</div>';	
+			if($tableUpdated){
+				$contBody .= '<div id="updatedRecs"> Update Records with Expected shipdate in comments?';
+				$contBody .= '<form method = "post">';
+				$contBody .= '<button type="submit" name="update" onclick="updateDB()">Submit</button>';
+				$contBody .= '</form>';
+				$contBody .= '</div>';	
+			}else{
+				$contBody .= '<div id="updatedRecs"> Records Updated!';
+				$contBody .= '</div>';	
+			}
+			
 			$contBody .= '</div>';
 		
 		//Footer

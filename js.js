@@ -26,5 +26,4 @@ function updateDB(){
 	};
 	xmlhttp.open("GET", "index.php?update=true", true);
 	xmlhttp.send();
-	return false;
 }
