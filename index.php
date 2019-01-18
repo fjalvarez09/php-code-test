@@ -23,10 +23,10 @@
 		
 		if (isset($_POST['update'])) {
 			addShipDate($conPDO);
-			htmlBuild($filters,$section, true);
+			htmlBuild($filters,$section, false);
 		}else{
 			//Build html 
-			htmlBuild($filters,$section, false);
+			htmlBuild($filters,$section, true);
 		}
 
 	}catch(PDOException $err){
